@@ -10,7 +10,9 @@ Dependencies
   * ZumoMotors.h
   * Pushbutton.h
   * QTRSensors.h
-  * ZumoReflectanceSensorArray.h
+
+* Included Library
+  * ZumoReflectanceArray.h
 
 Further reading
 =============
