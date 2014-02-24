@@ -5,7 +5,12 @@ This is the on board software for the CurioDuino robot. This software is loaded 
 
 Dependencies
 =============
-Zumo Shield - https://github.com/pololu/zumo-shield
+* Pololu Libraries - https://github.com/pololu/zumo-shield
+  * ZumoBuzzer.h
+  * ZumoMotors.h
+  * Pushbutton.h
+  * QTRSensors.h
+  * ZumoReflectanceSensorArray.h
 
 Further reading
 =============
