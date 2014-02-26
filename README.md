@@ -11,7 +11,7 @@ Dependencies
   * QTRSensors.h
  
 * Included Library
-  * ZumoReflectanceArray.h
+  * CurioDuinoReflectanceArray.h
 
 Further reading
 =============
