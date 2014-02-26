@@ -2,7 +2,7 @@
 #include <ZumoMotors.h>
 #include <Pushbutton.h>
 #include <QTRSensors.h>
-#include <ZumoReflectanceSensorArray.h>
+#include <CurioDuinoReflectanceSensorArray.h>
 
 // Status LED on pin 13
 #define LED 13
@@ -37,7 +37,7 @@ ZumoMotors motors;
 Pushbutton button(ZUMO_BUTTON); // Button on pin 12
 
 // No emitter pin means edge detection LEDs are on at all times
-ZumoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
+CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
 
 // todo: convert this for gui
 void waitForButtonAndCountDown()
