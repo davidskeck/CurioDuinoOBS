@@ -5,7 +5,7 @@ This is the on board software for the CurioDuino robot. This software is loaded 
 Dependencies
 =============
 
-IMPORTANT: These belong one directory higher, in a folder called "libraries". If they are not there, the Arduino IDE will not be able to find and use them.
+IMPORTANT: These belong one directory higher than the CurioDuino folder, in a folder called "libraries". If they are not there, the Arduino IDE will not be able to find and use them.
 
 * Pololu Libraries - https://github.com/pololu/zumo-shield
   * ZumoBuzzer.h
