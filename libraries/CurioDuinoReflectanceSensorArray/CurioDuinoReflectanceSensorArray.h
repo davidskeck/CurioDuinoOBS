@@ -40,7 +40,8 @@ class CurioDuinoReflectanceSensorArray : public QTRSensorsRC
   void init(unsigned char emitterPin = CURIODUINO_SENSOR_ARRAY_DEFAULT_EMITTER_PIN)
   {
 	  // THIS HAS BEEN MODIFIED FROM unsigned char sensorPins[] = { 4, A3, 11, A0, A2, 5 };
-	  // TO ONLY READ TWO
+	  // TO ONLY READ TWO SENSORS FOR THE PURPOSE OF CURIODUINO
+	  // THIS WILL INCREASE EFFICIENCY IN THE RTOS
     unsigned char sensorPins[] = { 4, 5 };
     QTRSensorsRC::init(sensorPins, sizeof(sensorPins), 2000, emitterPin);
   }
