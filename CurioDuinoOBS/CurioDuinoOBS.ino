@@ -1,6 +1,5 @@
 #include <ZumoBuzzer.h>
 #include <ZumoMotors.h>
-#include <Pushbutton.h>
 #include <QTRSensors.h>
 #include <CurioDuinoReflectanceSensorArray.h>
 
@@ -34,27 +33,37 @@ unsigned int sensor_values[NUM_SENSORS];
 
 ZumoBuzzer buzzer;
 ZumoMotors motors;
-Pushbutton button(ZUMO_BUTTON); // Button on pin 12
 
 // No emitter pin means edge detection LEDs are on at all times
 CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
 
-// todo: convert this for gui
-void waitForButtonAndCountDown()
+// Start/stop signal
+boolean isStarted = false;
+
+void waitForSignalAndCountDown()
 {
-  digitalWrite(LED, HIGH);
-  button.waitForButton();
-  digitalWrite(LED, LOW);
+  // Check if signalled to start
+  while(isStarted != true)
+  {
+    // Read and send data
+    sensors.read(sensor_values);
+    sendData();
+    
+    if(Serial.available() > 0)
+    {
+      // Signal was received
+      isStarted = Serial.read();
+    }
+  }
 
   // play audible countdown
   for (int i = 0; i < 3; i++)
   {
-    delay(400);
+    delay(200);
     buzzer.playNote(NOTE_G(3), 200, 15);
   }
   
-  buzzer.playNote(NOTE_G(4), 500, 15);  
-  delay(1000);
+  buzzer.playNote(NOTE_G(4), 500, 15);
 }
 
 void turnLeft()
@@ -89,7 +98,7 @@ void setup()
 {
   pinMode(LED, HIGH);
   Serial.begin(9600);
-  //waitForButtonAndCountDown();
+  waitForSignalAndCountDown();
 }
 
 void sendData()
@@ -114,19 +123,28 @@ void sendData()
 
 void loop()
 {
-  if (button.isPressed())
+  if (Serial.available() > 0)
   {
-    // If button is pressed, stop and wait for another press to go again
-    stopMoving();
-    button.waitForRelease();
-    button.waitForButton();
+    isStarted = Serial.read();
+    if(!isStarted)
+    {
+      // If signalled to stop, stop and wait
+      stopMoving();
+      // Continue sending data until new signal arrives
+      while(Serial.available() == 0)
+      {
+        // Read edge detection sensors
+        sensors.read(sensor_values);
+        sendData();
+      }
+    }
   }
   
   // Read edge detection sensors
   sensors.read(sensor_values);
-  
   sendData();
-  /*
+  
+  
   if (sensor_values[0] > QTR_THRESHOLD)
   {
     // Leftmost reflectance sensor detected an edge
@@ -167,6 +185,6 @@ void loop()
   {
     goForward();
   }
-  */
+  //*/
 }
 
