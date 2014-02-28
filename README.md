@@ -10,7 +10,6 @@ IMPORTANT: These belong one directory higher than the CurioDuino folder, in a fo
 * Pololu Libraries - https://github.com/pololu/zumo-shield
   * ZumoBuzzer.h
   * ZumoMotors.h
-  * Pushbutton.h
   * QTRSensors.h
  
 * Included Library
