@@ -144,7 +144,7 @@ void loop()
   sensors.read(sensor_values);
   sendData();
   
-  
+  /*
   if (sensor_values[0] > QTR_THRESHOLD)
   {
     // Leftmost reflectance sensor detected an edge
