@@ -149,6 +149,7 @@ void loop()
   {
     // Leftmost reflectance sensor detected an edge
     stopMoving();
+    sendData();
     goReverse();
     turnRight();
     goForward();
@@ -158,6 +159,7 @@ void loop()
   {
     // Rightmost reflectance sensor detected an edge
     stopMoving();
+    sendData();
     goReverse();
     turnLeft();
     goForward();
@@ -167,6 +169,8 @@ void loop()
   {
     // Obstacle detected
     stopMoving();
+    
+    sendData();
     
     // Get a random int from 1 to 2
     int rand = random (1, 3);
