@@ -179,7 +179,7 @@ void setup()
   compass.writeReg(LSM303::CRA_REG_M, CRA_REG_M_220HZ);    // 220 Hz compass update rate
 
   waitForSignalAndCountDown();
-  calibrateCompass();
+  //calibrateCompass();
 }
 
 void loop()
