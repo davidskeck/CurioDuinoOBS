@@ -254,8 +254,10 @@ void loop()
       turnLeft();
     }
     else
+    {
       turnRight();
-      
+    }
+    
     goForward();
   }
 
