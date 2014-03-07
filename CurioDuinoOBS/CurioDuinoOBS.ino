@@ -51,13 +51,25 @@ CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
 // Start/stop signal
 boolean isStarted = false;
 
+// Create struct to hold all data
+struct data
+{
+  int battery;
+  boolean leftEdge, rightEdge, leftObstacle,
+  rightObstacle, middleObstacle;
+  String dataFormatted;
+};
+
+// Make data struct to hold all sensor info
+data curioDuinoData;
+
 void waitForSignalAndCountDown()
 {
   // Check if signalled to start
   while(isStarted != true)
   {
     // Read and send data
-    sensors.read(sensor_values);
+    updateData();
     sendData();
     
     if(Serial.available() > 0)
@@ -65,13 +77,6 @@ void waitForSignalAndCountDown()
       // Signal was received
       isStarted = Serial.read();
     }
-  }
-
-  // play audible countdown
-  for (int i = 0; i < 3; i++)
-  {
-    delay(200);
-    buzzer.playNote(NOTE_G(3), 200, 15);
   }
   
   buzzer.playNote(NOTE_G(4), 500, 15);
@@ -105,24 +110,39 @@ void stopMoving()
   motors.setSpeeds(0, 0);
 }
 
+void updateData()
+{
+  // update edge sensors
+  sensors.read(sensor_values);
+  
+  // update data struct
+  curioDuinoData.leftEdge = (sensor_values[0] > QTR_THRESHOLD);
+  curioDuinoData.rightEdge = (sensor_values[1] > QTR_THRESHOLD);
+  curioDuinoData.battery = analogRead(BATTERY_SENSOR);
+  curioDuinoData.leftObstacle = (!digitalRead(LEFT_OBST_SENSOR));
+  curioDuinoData.middleObstacle = (!digitalRead(MIDDLE_OBST_SENSOR));
+  curioDuinoData.rightObstacle = (!digitalRead(RIGHT_OBST_SENSOR));
+}
+
 void sendData()
 {
-    String data;
-    
-    data = data + (sensor_values[0] > QTR_THRESHOLD);
-    data = data + "LE";
-    data = data + (sensor_values[1] > QTR_THRESHOLD);
-    data = data + "RE";
-    data = data + analogRead(BATTERY_SENSOR);
-    data = data + "B";
-    data = data + (!digitalRead(LEFT_OBST_SENSOR));
-    data = data + "LO";
-    data = data + (!digitalRead(MIDDLE_OBST_SENSOR));
-    data = data + "MO";
-    data = data + (!digitalRead(RIGHT_OBST_SENSOR));
-    data = data + "RO";
-    
-    Serial.println(data);
+  // update formatted string for sending data
+  curioDuinoData.dataFormatted = "";
+  curioDuinoData.dataFormatted += curioDuinoData.leftEdge;
+  curioDuinoData.dataFormatted += "LE";
+  curioDuinoData.dataFormatted += curioDuinoData.rightEdge;
+  curioDuinoData.dataFormatted += "RE";
+  curioDuinoData.dataFormatted += curioDuinoData.battery;
+  curioDuinoData.dataFormatted += "B";
+  curioDuinoData.dataFormatted += curioDuinoData.leftObstacle;
+  curioDuinoData.dataFormatted += "LO";
+  curioDuinoData.dataFormatted += curioDuinoData.middleObstacle;
+  curioDuinoData.dataFormatted += "MO";
+  curioDuinoData.dataFormatted += curioDuinoData.rightObstacle;
+  curioDuinoData.dataFormatted += "RO";
+  
+  // send string of sensor data
+  Serial.println(curioDuinoData.dataFormatted);
 }
 
 void calibrateCompass()
@@ -189,49 +209,42 @@ void loop()
     isStarted = Serial.read();
     if(!isStarted)
     {
-      // If signalled to stop, stop and wait
+      // If signaled to stop, stop and wait
       stopMoving();
       // Continue sending data until new signal arrives
       while(Serial.available() == 0)
       {
-        // Read edge detection sensors
-        sensors.read(sensor_values);
+        updateData();
         sendData();
       }
     }
   }
   
-  // Read edge detection sensors
-  sensors.read(sensor_values);
+  updateData();
   sendData();
   
-  
-  if (sensor_values[0] > QTR_THRESHOLD)
+  if (curioDuinoData.leftEdge)
   {
     // Leftmost reflectance sensor detected an edge
     stopMoving();
-    sendData();
     goReverse();
     turnRight();
     goForward();
   }
   
-  else if (sensor_values[1] > QTR_THRESHOLD)
+  else if (curioDuinoData.rightEdge)
   {
     // Rightmost reflectance sensor detected an edge
     stopMoving();
-    sendData();
     goReverse();
     turnLeft();
     goForward();
   }
 
-  if (!(digitalRead(MIDDLE_OBST_SENSOR) && digitalRead(RIGHT_OBST_SENSOR) && digitalRead(LEFT_OBST_SENSOR)))
+  if (curioDuinoData.middleObstacle || curioDuinoData.rightObstacle || curioDuinoData.leftObstacle)
   {
     // Obstacle detected
     stopMoving();
-    
-    sendData();
     
     // Get a random int from 1 to 2
     int rand = random (1, 3);
