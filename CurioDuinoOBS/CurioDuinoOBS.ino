@@ -65,7 +65,7 @@ data curioDuinoData;
 
 void waitForSignalAndCountDown()
 {
-  // Check if signalled to start
+  // Check if signaled to start
   while(isStarted != true)
   {
     // Read and send data
