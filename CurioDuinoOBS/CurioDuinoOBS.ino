@@ -51,7 +51,7 @@ CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
 // Start/stop signal
 boolean isStarted = false;
 
-// Create struct to hold all data
+// Create struct to hold all curioDuino data
 struct data
 {
   int battery;
