@@ -16,7 +16,8 @@ IMPORTANT: These belong one directory higher than the CurioDuino folder, in a fo
 	* Wire.h
 	* LSM303.h
 
-* Included Library
+* Included Libraries
+  * CurioDuinoData.h 
   * CurioDuinoReflectanceArray.h
 
 Further reading
