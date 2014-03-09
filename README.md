@@ -13,8 +13,8 @@ IMPORTANT: These belong one directory higher than the CurioDuino folder, in a fo
   * QTRSensors.h
 
 * Compass Libraries - https://github.com/pololu/lsm303-arduino
-	* Wire.h
-	* LSM303.h
+  * Wire.h
+  * LSM303.h
 
 * Included Libraries
   * CurioDuinoData.h 
