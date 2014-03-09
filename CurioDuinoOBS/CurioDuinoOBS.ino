@@ -52,12 +52,49 @@ CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
 boolean isStarted = false;
 
 // Create struct to hold all curioDuino data
-struct data
+class data
 {
-  int battery;
-  boolean leftEdge, rightEdge, leftObstacle,
-  rightObstacle, middleObstacle;
-  String dataFormatted;
+  public:
+  
+    void update()
+    {
+      // update edge sensors
+      sensors.read(sensor_values);
+    
+      // update data struct
+      leftEdge = (sensor_values[0] > QTR_THRESHOLD);
+      rightEdge = (sensor_values[1] > QTR_THRESHOLD);
+      battery = analogRead(BATTERY_SENSOR);
+      leftObstacle = (!digitalRead(LEFT_OBST_SENSOR));
+      middleObstacle = (!digitalRead(MIDDLE_OBST_SENSOR));
+      rightObstacle = (!digitalRead(RIGHT_OBST_SENSOR));
+    }
+  
+    void send()
+    {
+      // update formatted string for sending data
+      dataFormatted = "";
+      dataFormatted += leftEdge;
+      dataFormatted += "LE";
+      dataFormatted += rightEdge;
+      dataFormatted += "RE";
+      dataFormatted += battery;
+      dataFormatted += "B";
+      dataFormatted += leftObstacle;
+      dataFormatted += "LO";
+      dataFormatted += middleObstacle;
+      dataFormatted += "MO";
+      dataFormatted += rightObstacle;
+      dataFormatted += "RO";
+      
+      // send string of sensor data
+      Serial.println(dataFormatted);
+    }
+  
+    int battery;
+    boolean leftEdge, rightEdge, leftObstacle,
+    rightObstacle, middleObstacle;
+    String dataFormatted;
 };
 
 // Make data struct to hold all sensor info
@@ -69,8 +106,8 @@ void waitForSignalAndCountDown()
   while(isStarted != true)
   {
     // Read and send data
-    updateData();
-    sendData();
+    curioDuinoData.update();
+    curioDuinoData.send();
     
     if(Serial.available() > 0)
     {
@@ -108,41 +145,6 @@ void goReverse()
 void stopMoving()
 {
   motors.setSpeeds(0, 0);
-}
-
-void updateData()
-{
-  // update edge sensors
-  sensors.read(sensor_values);
-  
-  // update data struct
-  curioDuinoData.leftEdge = (sensor_values[0] > QTR_THRESHOLD);
-  curioDuinoData.rightEdge = (sensor_values[1] > QTR_THRESHOLD);
-  curioDuinoData.battery = analogRead(BATTERY_SENSOR);
-  curioDuinoData.leftObstacle = (!digitalRead(LEFT_OBST_SENSOR));
-  curioDuinoData.middleObstacle = (!digitalRead(MIDDLE_OBST_SENSOR));
-  curioDuinoData.rightObstacle = (!digitalRead(RIGHT_OBST_SENSOR));
-}
-
-void sendData()
-{
-  // update formatted string for sending data
-  curioDuinoData.dataFormatted = "";
-  curioDuinoData.dataFormatted += curioDuinoData.leftEdge;
-  curioDuinoData.dataFormatted += "LE";
-  curioDuinoData.dataFormatted += curioDuinoData.rightEdge;
-  curioDuinoData.dataFormatted += "RE";
-  curioDuinoData.dataFormatted += curioDuinoData.battery;
-  curioDuinoData.dataFormatted += "B";
-  curioDuinoData.dataFormatted += curioDuinoData.leftObstacle;
-  curioDuinoData.dataFormatted += "LO";
-  curioDuinoData.dataFormatted += curioDuinoData.middleObstacle;
-  curioDuinoData.dataFormatted += "MO";
-  curioDuinoData.dataFormatted += curioDuinoData.rightObstacle;
-  curioDuinoData.dataFormatted += "RO";
-  
-  // send string of sensor data
-  Serial.println(curioDuinoData.dataFormatted);
 }
 
 void calibrateCompass()
@@ -214,14 +216,14 @@ void loop()
       // Continue sending data until new signal arrives
       while(Serial.available() == 0)
       {
-        updateData();
-        sendData();
+        curioDuinoData.update();
+        curioDuinoData.send();
       }
     }
   }
   
-  updateData();
-  sendData();
+  curioDuinoData.update();
+  curioDuinoData.send();
   
   if (curioDuinoData.leftEdge)
   {
