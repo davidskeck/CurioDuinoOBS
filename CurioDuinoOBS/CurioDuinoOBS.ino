@@ -1,15 +1,24 @@
+/* David Keck
+ * CurioDuinoOBS.ino
+ * This software controls the on-board
+ * operations of the CurioDuino Autonomous
+ * robot project.
+ * More information can be found here:
+ * davidskeck.wordpress.com
+ */
+
 #include <ZumoBuzzer.h>
 #include <ZumoMotors.h>
-#include <QTRSensors.h>
+// The next 2 libraries are already included in
+// other custom library source code. However,
+// Arduino requires that all libraries that are
+// used anywhere within the program are included
+// in the main sketch. Otherwise, functions are undefined
 #include <CurioDuinoReflectanceSensorArray.h>
+#include <QTRSensors.h>
 #include <Wire.h>
 #include <LSM303.h>
-
-// Status LED on pin 13
-#define LED 13
-
-// Higher value here means less sensitive edge detection
-#define QTR_THRESHOLD  1400 // microseconds
+#include <CurioDuinoData.h>
 
 // Motor speeds
 #define REVERSE_SPEED     75 // 0 is stopped, 400 is full speed
@@ -20,17 +29,6 @@
 // todo: change to compass nav
 #define REVERSE_DURATION  400 // ms
 #define TURN_DURATION     400 // ms
-
-// Reflectance array right and left sensors only
-#define NUM_SENSORS 2
-
-// Battery readout pin
-#define BATTERY_SENSOR A1
-
-// Obstacle sensors and their pins
-#define MIDDLE_OBST_SENSOR 11
-#define RIGHT_OBST_SENSOR 17
-#define LEFT_OBST_SENSOR 14
 
 // Compass
 #define CALIBRATION_SAMPLES 70  // Number of compass readings to take when calibrating
@@ -43,69 +41,10 @@
 LSM303 compass;
 ZumoBuzzer buzzer;
 ZumoMotors motors;
+CurioDuinoData data;
 
 // Start/stop signal
 boolean isStarted = false;
-
-// Create struct to hold all curioDuino data
-class CurioDuinoData
-{
-  public:
-  
-    CurioDuinoData()
-    {
-      // initialize sensor array
-      // No emitter pin means edge detection LEDs are on at all times
-      //sensors(QTR_NO_EMITTER_PIN);
-    }
-  
-    void update()
-    {
-      // update edge sensors
-      sensors.read(sensor_values);
-    
-      // update data struct
-      leftEdge = (sensor_values[0] > QTR_THRESHOLD);
-      rightEdge = (sensor_values[1] > QTR_THRESHOLD);
-      battery = analogRead(BATTERY_SENSOR);
-      leftObstacle = (!digitalRead(LEFT_OBST_SENSOR));
-      middleObstacle = (!digitalRead(MIDDLE_OBST_SENSOR));
-      rightObstacle = (!digitalRead(RIGHT_OBST_SENSOR));
-    }
-  
-    void send()
-    {
-      // update formatted string for sending data
-      dataFormatted = "";
-      dataFormatted += leftEdge;
-      dataFormatted += "LE";
-      dataFormatted += rightEdge;
-      dataFormatted += "RE";
-      dataFormatted += battery;
-      dataFormatted += "B";
-      dataFormatted += leftObstacle;
-      dataFormatted += "LO";
-      dataFormatted += middleObstacle;
-      dataFormatted += "MO";
-      dataFormatted += rightObstacle;
-      dataFormatted += "RO";
-      
-      // send string of sensor data
-      Serial.println(dataFormatted);
-    }
-    
-    unsigned int sensor_values[NUM_SENSORS];
-    // Automatically initialized to no emitter pin
-    // Side header lights on both sides always turned on
-    CurioDuinoReflectanceSensorArray sensors;
-    int battery;
-    boolean leftEdge, rightEdge, leftObstacle,
-    rightObstacle, middleObstacle;
-    String dataFormatted;
-};
-
-// Make data struct to hold all sensor info
-CurioDuinoData curioDuinoData;
 
 void waitForSignalAndCountDown()
 {
@@ -113,8 +52,8 @@ void waitForSignalAndCountDown()
   while(isStarted != true)
   {
     // Read and send data
-    curioDuinoData.update();
-    curioDuinoData.send();
+    data.update();
+    data.send();
     
     if(Serial.available() > 0)
     {
@@ -223,16 +162,16 @@ void loop()
       // Continue sending data until new signal arrives
       while(Serial.available() == 0)
       {
-        curioDuinoData.update();
-        curioDuinoData.send();
+        data.update();
+        data.send();
       }
     }
   }
   
-  curioDuinoData.update();
-  curioDuinoData.send();
+  data.update();
+  data.send();
   
-  if (curioDuinoData.leftEdge)
+  if (data.leftEdge)
   {
     // Leftmost reflectance sensor detected an edge
     stopMoving();
@@ -241,7 +180,7 @@ void loop()
     goForward();
   }
   
-  else if (curioDuinoData.rightEdge)
+  else if (data.rightEdge)
   {
     // Rightmost reflectance sensor detected an edge
     stopMoving();
@@ -250,7 +189,7 @@ void loop()
     goForward();
   }
 
-  if (curioDuinoData.middleObstacle || curioDuinoData.rightObstacle || curioDuinoData.leftObstacle)
+  if (data.middleObstacle || data.rightObstacle || data.leftObstacle)
   {
     // Obstacle detected
     stopMoving();
@@ -270,7 +209,7 @@ void loop()
     goForward();
   }
 
-  else
+  //else
   {
     goForward();
   }

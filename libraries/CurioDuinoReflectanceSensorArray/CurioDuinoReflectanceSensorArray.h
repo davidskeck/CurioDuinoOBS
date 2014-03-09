@@ -21,11 +21,7 @@ class CurioDuinoReflectanceSensorArray : public QTRSensorsRC
   // if this constructor is used, the user must call init() before using
   // the methods in this class
   CurioDuinoReflectanceSensorArray() 
-  {
-	// CurioDuino edit from original: normally has no expression in constructor
-	// Initialize to no emitter pin
-	init(QTR_NO_EMITTER_PIN)
-  }
+  {}
 
   // this constructor calls init with the given emitter pin and default values for other settings
   CurioDuinoReflectanceSensorArray(unsigned char emitterPin)
