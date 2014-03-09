@@ -23,7 +23,6 @@
 
 // Reflectance array right and left sensors only
 #define NUM_SENSORS 2
-unsigned int sensor_values[NUM_SENSORS];
 
 // Battery readout pin
 #define BATTERY_SENSOR A1
@@ -45,16 +44,20 @@ LSM303 compass;
 ZumoBuzzer buzzer;
 ZumoMotors motors;
 
-// No emitter pin means edge detection LEDs are on at all times
-CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
-
 // Start/stop signal
 boolean isStarted = false;
 
 // Create struct to hold all curioDuino data
-class data
+class CurioDuinoData
 {
   public:
+  
+    CurioDuinoData()
+    {
+      // initialize sensor array
+      // No emitter pin means edge detection LEDs are on at all times
+      //sensors(QTR_NO_EMITTER_PIN);
+    }
   
     void update()
     {
@@ -90,7 +93,11 @@ class data
       // send string of sensor data
       Serial.println(dataFormatted);
     }
-  
+    
+    unsigned int sensor_values[NUM_SENSORS];
+    // Automatically initialized to no emitter pin
+    // Side header lights on both sides always turned on
+    CurioDuinoReflectanceSensorArray sensors;
     int battery;
     boolean leftEdge, rightEdge, leftObstacle,
     rightObstacle, middleObstacle;
@@ -98,7 +105,7 @@ class data
 };
 
 // Make data struct to hold all sensor info
-data curioDuinoData;
+CurioDuinoData curioDuinoData;
 
 void waitForSignalAndCountDown()
 {
