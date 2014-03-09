@@ -1,9 +1,9 @@
 #include <ZumoBuzzer.h>
 #include <ZumoMotors.h>
 #include <QTRSensors.h>
+#include <CurioDuinoReflectanceSensorArray.h>
 #include <Wire.h>
 #include <LSM303.h>
-#include <CurioDuinoReflectanceSensorArray.h>
 
 // Status LED on pin 13
 #define LED 13

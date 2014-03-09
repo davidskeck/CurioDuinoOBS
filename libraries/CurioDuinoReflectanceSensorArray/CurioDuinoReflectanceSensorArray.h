@@ -1,7 +1,7 @@
 // Code originally from Pololu
 // https://github.com/pololu/zumo-shield
 // Edited for CurioDuino Project
-// David Keck
+// by David Keck
 
 #include <../QTRSensors/QTRSensors.h>
 #include <Arduino.h>
