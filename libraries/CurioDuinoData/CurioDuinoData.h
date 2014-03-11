@@ -41,11 +41,13 @@ public:
 	// Send string containing formatted data
 	void send();
 
-	// Prepare string for sending data
+	// Prepare string to be sent
 	void prepareData();
 
 	// Public to adhere to NASA's MSL rules of
 	// only void return functions
+
+	// Array to hold sensor pin for edge detections
 	unsigned int sensor_values[NUM_SENSORS];
     // Automatically initialized to no emitter pin
     // Side header lights on both sides always turned on
