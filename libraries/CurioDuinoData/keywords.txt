@@ -12,5 +12,6 @@ CurioDuinoData	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-update	KEYWORD2
-send	KEYWORD2
+update  	KEYWORD2
+send    	KEYWORD2
+prepareData KEYWORD2

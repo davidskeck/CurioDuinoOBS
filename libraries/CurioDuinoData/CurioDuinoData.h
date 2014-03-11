@@ -38,8 +38,11 @@ public:
 	// Update all sensor data
 	void update();
 
-	// Get string containing data
+	// Send string containing formatted data
 	void send();
+
+	// Prepare string for sending data
+	void prepareData();
 
 	// Public to adhere to NASA's MSL rules of
 	// only void return functions

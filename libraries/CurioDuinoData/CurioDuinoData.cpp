@@ -25,9 +25,11 @@ void CurioDuinoData::update()
   leftObstacle = (!digitalRead(LEFT_OBST_SENSOR));
   middleObstacle = (!digitalRead(MIDDLE_OBST_SENSOR));
   rightObstacle = (!digitalRead(RIGHT_OBST_SENSOR));
+
+  prepareData();
 }
 
-void CurioDuinoData::send()
+void CurioDuinoData::prepareData()
 {
   // update formatted string for sending data
   dataFormatted = "";
@@ -43,7 +45,10 @@ void CurioDuinoData::send()
   dataFormatted += "MO";
   dataFormatted += rightObstacle;
   dataFormatted += "RO";
-  
+}
+
+void CurioDuinoData::send()
+{ 
   // send string of sensor data
   Serial.println(dataFormatted);
 }
