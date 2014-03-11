@@ -7,18 +7,7 @@ Dependencies
 
 IMPORTANT: These belong one directory higher than the CurioDuino folder, in a folder called "libraries". If they are not there, the Arduino IDE will not be able to find and use them.
 
-* Zumo Shield Libraries - http://github.com/pololu/zumo-shield
-  * ZumoBuzzer.h
-  * ZumoMotors.h
-  * QTRSensors.h
-
-* Compass Libraries - http://github.com/pololu/lsm303-arduino
-  * Wire.h
-  * LSM303.h
-
-* Included Libraries
-  * CurioDuinoData.h 
-  * CurioDuinoReflectanceArray.h
+* CurioDuinoLibraries - http://github.com/davidskeck/CurioDuinoLibraries
 
 Further reading
 =============
