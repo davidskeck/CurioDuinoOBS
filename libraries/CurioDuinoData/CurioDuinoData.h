@@ -20,10 +20,6 @@ class CurioDuinoReflectanceSensorArray;
 // Reflectance array right and left sensors only
 #define NUM_SENSORS 2
 
-// No emitter pin, means header lights for 
-// edge detection are always on
-#define QTR_NO_EMITTER_PIN 255
-
 // Higher value here means less sensitive edge detection
 #define QTR_THRESHOLD  1400 // microseconds
 
@@ -50,7 +46,7 @@ public:
 	unsigned int sensor_values[NUM_SENSORS];
     // Automatically initialized to no emitter pin
     // Side header lights on both sides always turned on
-    CurioDuinoReflectanceSensorArray sensors(QTR_NO_EMITTER_PIN);
+    CurioDuinoReflectanceSensorArray sensors;
     int battery;
     boolean leftEdge, rightEdge, leftObstacle,
     rightObstacle, middleObstacle;
