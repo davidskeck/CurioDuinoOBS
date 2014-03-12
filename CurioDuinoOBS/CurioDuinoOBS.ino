@@ -1,4 +1,5 @@
-/* David Keck
+/* 
+ * David Keck
  * CurioDuinoOBS.ino
  * This software controls the on-board
  * operations of the CurioDuino Autonomous
@@ -16,6 +17,7 @@
 // in the main sketch. Otherwise, functions are undefined
 #include <CurioDuinoReflectanceSensorArray.h>
 #include <QTRSensors.h>
+
 #include <Wire.h>
 #include <LSM303.h>
 #include <CurioDuinoData.h>
