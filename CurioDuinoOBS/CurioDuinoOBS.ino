@@ -12,7 +12,7 @@
 // other custom library source code. However,
 // Arduino requires that all libraries that are
 // used anywhere within the program are included
-// in the main sketch. Otherwise, functions are undefined
+// in the main sketch. Otherwise, their functions are undefined
 #include <CurioDuinoReflectanceSensorArray.h>
 #include <QTRSensors.h>
 #include <ZumoMotors.h>
@@ -33,7 +33,6 @@
 
 LSM303 compass;
 ZumoBuzzer buzzer;
-ZumoMotors motors;
 CurioDuinoData data;
 CurioDuinoNav nav;
 
@@ -69,8 +68,8 @@ void calibrateCompass()
   // To calibrate the magnetometer, the Zumo spins to find the max/min
   // magnetic vectors. This information is used to correct for offsets
   // in the magnetometer data.
-  motors.setLeftSpeed(FORWARD_SPEED);
-  motors.setRightSpeed(-FORWARD_SPEED);
+  nav.motors.setLeftSpeed(FORWARD_SPEED);
+  nav.motors.setRightSpeed(-FORWARD_SPEED);
 
   for(index = 0; index < CALIBRATION_SAMPLES; index ++)
   {
