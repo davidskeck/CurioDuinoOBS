@@ -21,16 +21,7 @@
 #include <Wire.h>
 #include <LSM303.h>
 #include <CurioDuinoData.h>
-
-// Motor speeds
-#define REVERSE_SPEED     75 // 0 is stopped, 400 is full speed
-#define TURN_SPEED        200
-#define FORWARD_SPEED     75
-
-// Almost makes 90 degree turn
-// todo: change to compass nav
-#define REVERSE_DURATION  400 // ms
-#define TURN_DURATION     400 // ms
+#include <CurioDuinoNav.h>
 
 // Compass
 #define CALIBRATION_SAMPLES 70  // Number of compass readings to take when calibrating
@@ -44,6 +35,7 @@ LSM303 compass;
 ZumoBuzzer buzzer;
 ZumoMotors motors;
 CurioDuinoData data;
+CurioDuinoNav nav;
 
 // Start/stop signal
 boolean isStarted = false;
@@ -65,34 +57,6 @@ void waitForSignalAndCountDown()
   }
   
   buzzer.playNote(NOTE_G(4), 500, 15);
-}
-
-void turnLeft()
-{
-  motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
-  delay(TURN_DURATION);
-}
-
-void turnRight()
-{
-  motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
-  delay(TURN_DURATION);
-}
-
-void goForward()
-{
-  motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-}
-
-void goReverse()
-{
-  motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-  delay(REVERSE_DURATION);
-}
-
-void stopMoving()
-{
-  motors.setSpeeds(0, 0);
 }
 
 void calibrateCompass()
@@ -122,7 +86,7 @@ void calibrateCompass()
     delay(50);
   }
   
-  stopMoving();
+  nav.stopMoving();
   
   // Set calibrated values to compass.m_max and compass.m_min
   compass.m_max.x = running_max.x;
@@ -160,7 +124,7 @@ void loop()
     if(!isStarted)
     {
       // If signaled to stop, stop and wait
-      stopMoving();
+      nav.stopMoving();
       // Continue sending data until new signal arrives
       while(Serial.available() == 0)
       {
@@ -176,44 +140,44 @@ void loop()
   if (data.leftEdge)
   {
     // Leftmost reflectance sensor detected an edge
-    stopMoving();
-    goReverse();
-    turnRight();
-    goForward();
+    nav.stopMoving();
+    nav.goReverse();
+    nav.turnRight();
+    nav.goForward();
   }
   
   else if (data.rightEdge)
   {
     // Rightmost reflectance sensor detected an edge
-    stopMoving();
-    goReverse();
-    turnLeft();
-    goForward();
+    nav.stopMoving();
+    nav.goReverse();
+    nav.turnLeft();
+    nav.goForward();
   }
 
   if (data.middleObstacle || data.rightObstacle || data.leftObstacle)
   {
     // Obstacle detected
-    stopMoving();
+    nav.stopMoving();
     
     // Get a random int from 1 to 2
     int rand = random (1, 3);
     
     if (rand == 1)
     {
-      turnLeft();
+      nav.turnLeft();
     }
     else
     {
-      turnRight();
+      nav.turnRight();
     }
     
-    goForward();
+    nav.goForward();
   }
 
   //else
   {
-    goForward();
+    nav.goForward();
   }
   //*/
 }
