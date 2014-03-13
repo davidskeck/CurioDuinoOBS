@@ -8,16 +8,16 @@
  * davidskeck.wordpress.com
  */
 
-#include <ZumoBuzzer.h>
-#include <ZumoMotors.h>
-// The next 2 libraries are already included in
+// The next 3 libraries are already included in
 // other custom library source code. However,
 // Arduino requires that all libraries that are
 // used anywhere within the program are included
 // in the main sketch. Otherwise, functions are undefined
 #include <CurioDuinoReflectanceSensorArray.h>
 #include <QTRSensors.h>
+#include <ZumoMotors.h>
 
+#include <ZumoBuzzer.h>
 #include <Wire.h>
 #include <LSM303.h>
 #include <CurioDuinoData.h>
