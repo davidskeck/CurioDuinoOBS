@@ -8,7 +8,7 @@
  * davidskeck.wordpress.com
  */
 
-// The next 3 libraries are already included in
+// The next 4 libraries are already included in
 // other custom library source code. However,
 // Arduino requires that all libraries that are
 // used anywhere within the program are included
@@ -16,12 +16,14 @@
 #include <CurioDuinoReflectanceSensorArray.h>
 #include <QTRSensors.h>
 #include <ZumoMotors.h>
-
 #include <ZumoBuzzer.h>
+
 #include <Wire.h>
 #include <LSM303.h>
+
 #include <CurioDuinoData.h>
 #include <CurioDuinoNav.h>
+#include <CurioDuinoComm.h>
 
 // Compass
 #define CALIBRATION_SAMPLES 70  // Number of compass readings to take when calibrating
@@ -32,9 +34,9 @@
 #define DEVIATION_THRESHOLD 5
 
 LSM303 compass;
-ZumoBuzzer buzzer;
 CurioDuinoData data;
 CurioDuinoNav nav;
+CurioDuinoComm comm;
 
 // Start/stop signal
 boolean isStarted = false;
@@ -46,7 +48,7 @@ void waitForSignalAndCountDown()
   {
     // Read and send data
     data.update();
-    data.send();
+    comm.send(data.dataFormatted);
     
     if(Serial.available() > 0)
     {
@@ -55,7 +57,7 @@ void waitForSignalAndCountDown()
     }
   }
   
-  buzzer.playNote(NOTE_G(4), 500, 15);
+  comm.buzzer.playNote(NOTE_G(4), 500, 15);
 }
 
 void calibrateCompass()
@@ -128,13 +130,13 @@ void loop()
       while(Serial.available() == 0)
       {
         data.update();
-        data.send();
+        comm.send(data.dataFormatted);
       }
     }
   }
   
   data.update();
-  data.send();
+  comm.send(data.dataFormatted);
   
   if (data.leftEdge)
   {
