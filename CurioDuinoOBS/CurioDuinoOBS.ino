@@ -180,6 +180,5 @@ void loop()
   {
     nav.goForward();
   }
-  //*/
 }
 
