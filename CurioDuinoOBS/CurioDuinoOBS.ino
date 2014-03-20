@@ -94,6 +94,9 @@ void calibrateCompass()
   compass.m_max.y = running_max.y;
   compass.m_min.x = running_min.x;
   compass.m_min.y = running_min.y;
+  
+  // Reset to accomodate calibrate compass button in GUI
+  isStarted = false;
 }
 
 void setup()
@@ -114,7 +117,8 @@ void setup()
   compass.writeReg(LSM303::CRA_REG_M, CRA_REG_M_220HZ);    // 220 Hz compass update rate
 
   waitForSignalAndCountDown();
-  //calibrateCompass();
+  calibrateCompass();
+  waitForSignalAndCountDown();
 }
 
 void loop()
