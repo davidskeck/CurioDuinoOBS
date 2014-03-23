@@ -60,7 +60,7 @@ void waitForSignalAndCountDown()
   buzzer.playNote(NOTE_G(4), 500, 15);
 }
 
-void recieveData()
+void receiveCommand()
 {
    if (Serial.available() > 0)
   {
@@ -146,7 +146,7 @@ void setup()
 
 void loop()
 {
-  recieveData();
+  receiveCommand();
   
   data.update();
   data.send();
