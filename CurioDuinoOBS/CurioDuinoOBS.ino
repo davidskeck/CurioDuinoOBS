@@ -60,6 +60,29 @@ void waitForSignalAndCountDown()
   buzzer.playNote(NOTE_G(4), 500, 15);
 }
 
+void recieveData()
+{
+   if (Serial.available() > 0)
+  {
+    isStarted = Serial.read();
+    if(!isStarted)
+    {
+      // If signaled to stop, stop and wait
+      nav.stopMoving();
+      // Continue sending data until signaled to start
+      while(!isStarted)
+      {
+        data.update();
+        data.send();
+        if (Serial.available() > 0)
+        {
+          isStarted = Serial.read();
+        }
+      }
+    }
+  }
+}
+
 void calibrateCompass()
 {
   // The highest and lowest possible magnetic value to read in any direction is 2047 or -2047
@@ -123,21 +146,7 @@ void setup()
 
 void loop()
 {
-  if (Serial.available() > 0)
-  {
-    isStarted = Serial.read();
-    if(!isStarted)
-    {
-      // If signaled to stop, stop and wait
-      nav.stopMoving();
-      // Continue sending data until new signal arrives
-      while(Serial.available() == 0)
-      {
-        data.update();
-        data.send();
-      }
-    }
-  }
+  recieveData();
   
   data.update();
   data.send();
