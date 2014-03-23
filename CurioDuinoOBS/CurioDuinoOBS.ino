@@ -38,48 +38,18 @@ ZumoBuzzer buzzer;
 CurioDuinoData data;
 CurioDuinoNav nav;
 
-// Start/stop signal
-boolean isStarted = false;
-
-void waitForSignalAndCountDown()
+void checkDataAndWait()
 {
   // Check if signaled to start
-  while(isStarted != true)
+  while(data.isStarted != true)
   {
-    // Read and send data
+    // Stop moving
+    nav.stopMoving();
+    
+    // Read, send, and receive data
     data.update();
     data.send();
-    
-    if(Serial.available() > 0)
-    {
-      // Signal was received
-      isStarted = Serial.read();
-    }
-  }
-  
-  buzzer.playNote(NOTE_G(4), 500, 15);
-}
-
-void receiveCommand()
-{
-   if (Serial.available() > 0)
-  {
-    isStarted = Serial.read();
-    if(!isStarted)
-    {
-      // If signaled to stop, stop and wait
-      nav.stopMoving();
-      // Continue sending data until signaled to start
-      while(!isStarted)
-      {
-        data.update();
-        data.send();
-        if (Serial.available() > 0)
-        {
-          isStarted = Serial.read();
-        }
-      }
-    }
+    data.receive();
   }
 }
 
@@ -119,7 +89,7 @@ void calibrateCompass()
   compass.m_min.y = running_min.y;
   
   // Reset to accomodate calibrate compass button in GUI
-  isStarted = false;
+  data.isStarted = false;
 }
 
 void setup()
@@ -139,14 +109,16 @@ void setup()
   compass.writeReg(LSM303::CRB_REG_M, CRB_REG_M_2_5GAUSS); // +/- 2.5 gauss sensitivity to hopefully avoid overflow problems
   compass.writeReg(LSM303::CRA_REG_M, CRA_REG_M_220HZ);    // 220 Hz compass update rate
 
-  waitForSignalAndCountDown();
+  checkDataAndWait();
   calibrateCompass();
-  waitForSignalAndCountDown();
+  checkDataAndWait();
 }
 
 void loop()
 {
-  receiveCommand();
+  data.receive();
+  
+  checkDataAndWait();
   
   data.update();
   data.send();
