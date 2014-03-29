@@ -21,6 +21,15 @@
 #include <ZumoBuzzer.h>
 #include <Wire.h>
 #include <LSM303.h>
+#include <NilRTOS.h>
+#include <NilRTOS.h>
+
+// Use tiny unbuffered NilRTOS NilSerial library.
+#include <NilSerial.h>
+
+// Macro to redefine Serial as NilSerial to save RAM.
+// Remove definition to use standard Arduino Serial.
+#define Serial NilSerial
 
 #include <CurioDuinoData.h>
 #include <CurioDuinoNav.h>
