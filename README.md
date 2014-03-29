@@ -1,6 +1,6 @@
 CurioDuinoOBS
 =============
-This is the on board software for the CurioDuino robot. This software is loaded onto the Arduino Uno. This is a very early working prototype. Real-time OS libraries have not yet been added.
+This is the on board software for the CurioDuino robot. This software is loaded onto the Arduino Uno to control an autonomous robot. The software makes use of the NilRTOS to ensure edge detection processing deadlines are met.
 
 Dependencies
 =============
