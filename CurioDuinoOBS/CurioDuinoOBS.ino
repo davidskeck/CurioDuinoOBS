@@ -54,7 +54,10 @@ void setup()
 {  
   // Open serial port at 9600 baud
   Serial.begin(9600);
-
+  
+  // Start navigation class
+  nav.begin();
+  
   // Wait for GUI to signal start
   checkDataAndWait();
 }
@@ -67,6 +70,8 @@ void loop()
   
   data.update();
   data.send();
+  
+  nav.setSpeed(100);
   
   if (data.leftEdge)
   {
