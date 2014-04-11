@@ -55,6 +55,9 @@ void setup()
   // Open serial port at 9600 baud
   Serial.begin(9600);
   
+  // Start data class
+  data.begin();
+  
   // Start navigation class
   nav.begin();
   
