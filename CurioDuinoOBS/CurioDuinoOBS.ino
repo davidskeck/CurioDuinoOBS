@@ -14,6 +14,7 @@
 // Arduino requires that all libraries that are
 // used anywhere within the program are included
 // in the main sketch. Otherwise, their functions are undefined
+
 #include <CurioDuinoReflectanceSensorArray.h>
 #include <QTRSensors.h>
 #include <ZumoMotors.h>
@@ -50,6 +51,105 @@ void checkDataAndWait()
   }
 }
 
+//------------------------------------------------------------------------------
+// Declare a stack with 64 bytes beyond context switch and interrupt needs.
+NIL_WORKING_AREA(waThread1, 64);
+
+// Declare thread function for thread 1.
+NIL_THREAD(Thread1, arg) {
+
+  while (TRUE) 
+  {
+    data.update();
+    data.receive();
+    checkDataAndWait();
+    data.send();
+    
+    // Sleep so lower priority threads can execute.
+    nilThdSleep(10);
+  }
+}
+//------------------------------------------------------------------------------
+// Declare a stack with 64 bytes beyond context switch and interrupt needs.
+NIL_WORKING_AREA(waThread2, 64);
+
+// Declare thread function for thread 2.
+NIL_THREAD(Thread2, arg) {
+
+  while (TRUE) 
+  {
+    if (data.leftEdge)
+    {
+      // Leftmost reflectance sensor detected an edge
+      nav.stopMoving();
+      nav.goReverse();
+      nav.turnRight();
+      nav.goForward();
+    }
+    
+    else if (data.rightEdge)
+    {
+      // Rightmost reflectance sensor detected an edge
+      nav.stopMoving();
+      nav.goReverse();
+      nav.turnLeft();
+      nav.goForward();
+    }
+    
+    // Sleep so lower priority threads can execute.
+    nilThdSleep(40);
+  }
+}
+//------------------------------------------------------------------------------
+// Declare a stack with 64 bytes beyond context switch and interrupt needs.
+NIL_WORKING_AREA(waThread3, 64);
+
+// Declare thread function for thread 3.
+NIL_THREAD(Thread3, arg) {
+
+  while (TRUE) 
+  {
+    if (data.middleObstacle || data.rightObstacle || data.leftObstacle)
+    {
+      // Obstacle detected
+      nav.stopMoving();
+      
+      // Get a random int from 1 to 2
+      int rand = random (1, 3);
+      
+      if (rand == 1)
+      {
+        nav.turnLeft();
+      }
+      else
+      {
+        nav.turnRight();
+      }
+    }
+    
+    else
+    {
+      nav.goForward();
+    }
+    
+    // Sleep so lower priority threads can execute.
+    nilThdSleep(40);
+  }
+}
+//------------------------------------------------------------------------------
+/*
+ * Threads static table, one entry per thread.  A thread's priority is
+ * determined by its position in the table with highest priority first.
+ *
+ * These threads start with a null argument.  A thread's name is also
+ * null to save RAM since the name is currently not used.
+ */
+NIL_THREADS_TABLE_BEGIN()
+NIL_THREADS_TABLE_ENTRY(NULL, Thread1, NULL, waThread1, sizeof(waThread1))
+NIL_THREADS_TABLE_ENTRY(NULL, Thread2, NULL, waThread2, sizeof(waThread2))
+NIL_THREADS_TABLE_ENTRY(NULL, Thread3, NULL, waThread3, sizeof(waThread3))
+NIL_THREADS_TABLE_END()
+//------------------------------------------------------------------------------
 void setup()
 {  
   // Open serial port at 9600 baud
@@ -61,62 +161,17 @@ void setup()
   // Start navigation class
   nav.begin();
   
+  // Set starting speed
+  nav.setSpeed(75);
+  
   // Wait for GUI to signal start
   checkDataAndWait();
+  
+  // Start the kernel
+  nilSysBegin();
 }
 
+// Idle loop
 void loop()
-{
-  data.receive();
-  
-  checkDataAndWait();
-  
-  data.update();
-  data.send();
-  
-  nav.setSpeed(100);
-  
-  if (data.leftEdge)
-  {
-    // Leftmost reflectance sensor detected an edge
-    nav.stopMoving();
-    nav.goReverse();
-    nav.turnRight();
-    nav.goForward();
-  }
-  
-  else if (data.rightEdge)
-  {
-    // Rightmost reflectance sensor detected an edge
-    nav.stopMoving();
-    nav.goReverse();
-    nav.turnLeft();
-    nav.goForward();
-  }
-
-  if (data.middleObstacle || data.rightObstacle || data.leftObstacle)
-  {
-    // Obstacle detected
-    nav.stopMoving();
-    
-    // Get a random int from 1 to 2
-    int rand = random (1, 3);
-    
-    if (rand == 1)
-    {
-      nav.turnLeft();
-    }
-    else
-    {
-      nav.turnRight();
-    }
-    
-    nav.goForward();
-  }
-
-  //else
-  {
-    nav.goForward();
-  }
-}
+{}
 
