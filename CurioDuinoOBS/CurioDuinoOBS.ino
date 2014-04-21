@@ -78,26 +78,26 @@ NIL_THREAD(Thread2, arg) {
 
   while (TRUE) 
   {
-    if (data.leftEdge)
+    if (data.leftEdge || data.rightEdge)
     {
-      // Leftmost reflectance sensor detected an edge
       nav.stopMoving();
       nav.goReverse();
-      nav.turnRight();
-      nav.goForward();
-    }
-    
-    else if (data.rightEdge)
-    {
-      // Rightmost reflectance sensor detected an edge
-      nav.stopMoving();
-      nav.goReverse();
-      nav.turnLeft();
+      
+      if (data.leftEdge)
+      {
+        nav.turnRight();
+      }
+      
+      else
+      {
+        nav.turnLeft();
+      }
+      
       nav.goForward();
     }
     
     // Sleep so lower priority threads can execute.
-    nilThdSleep(40);
+    nilThdSleep(20);
   }
 }
 //------------------------------------------------------------------------------
@@ -131,9 +131,6 @@ NIL_THREAD(Thread3, arg) {
     {
       nav.goForward();
     }
-    
-    // Sleep so lower priority threads can execute.
-    nilThdSleep(40);
   }
 }
 //------------------------------------------------------------------------------
@@ -171,7 +168,7 @@ void setup()
   nilSysBegin();
 }
 
-// Idle loop
+// Idle thread
 void loop()
 {}
 
