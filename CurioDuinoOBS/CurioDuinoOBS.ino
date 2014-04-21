@@ -81,15 +81,16 @@ NIL_THREAD(Thread2, arg) {
     if (data.leftEdge || data.rightEdge)
     {
       nav.stopMoving();
-      nav.goReverse();
       
       if (data.leftEdge)
       {
+        nav.goReverse();
         nav.turnRight();
       }
       
       else
       {
+        nav.goReverse();
         nav.turnLeft();
       }
       
