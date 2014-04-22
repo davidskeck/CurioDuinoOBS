@@ -49,6 +49,12 @@ void checkDataAndWait()
     data.send();
     data.receive();
   }
+  
+  // Check if speed has changed
+  if (nav.forwardSpeed != data.newSetSpeed)
+  {
+    nav.forwardSpeed = data.newSetSpeed;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +166,7 @@ void setup()
   nav.begin();
   
   // Set starting speed
-  nav.setSpeed(75);
+  nav.forwardSpeed = 75;
   
   // Wait for GUI to signal start
   checkDataAndWait();
