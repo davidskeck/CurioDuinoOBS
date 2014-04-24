@@ -57,7 +57,7 @@ void checkDataAndWait()
   }
 }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------ 
 // Declare a stack with 64 bytes beyond context switch and interrupt needs.
 NIL_WORKING_AREA(waThread1, 64);
 
@@ -91,13 +91,13 @@ NIL_THREAD(Thread2, arg) {
       if (data.leftEdge)
       {
         nav.goReverse();
-        nav.turnRight();
+        nav.turnRight(EDGE_TURN_DURATION);
       }
       
       else
       {
         nav.goReverse();
-        nav.turnLeft();
+        nav.turnLeft(EDGE_TURN_DURATION);
       }
       
       nav.goForward();
@@ -126,11 +126,11 @@ NIL_THREAD(Thread3, arg) {
       
       if (rand == 1)
       {
-        nav.turnLeft();
+        nav.turnLeft(OBSTACLE_TURN_DURATION);
       }
       else
       {
-        nav.turnRight();
+        nav.turnRight(OBSTACLE_TURN_DURATION);
       }
     }
     
