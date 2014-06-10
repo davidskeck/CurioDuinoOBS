@@ -19,8 +19,7 @@
 #include <QTRSensors.h>
 #include <ZumoMotors.h>
 
-// Pre-package libraries
-#include <ZumoBuzzer.h>
+// Pre-packaged libraries
 #include <NilRTOS.h>
 #include <NilSerial.h>
 
@@ -32,7 +31,6 @@
 // Remove definition to use standard Arduino Serial.
 #define Serial NilSerial
 
-ZumoBuzzer buzzer;
 CurioDuinoData data;
 CurioDuinoNav nav;
 
